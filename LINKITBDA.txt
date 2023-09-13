@@ -1,0 +1,450 @@
+*************************Data Pre-Processing: Building Good Training Sets********************************
+
+import pandas as pd
+from sklearn.preprocessing import LabelEncoder, StandardScaler
+from sklearn.model_selection import train_test_split
+# Load the dataset
+data = pd.read_csv('train.csv')
+# Perform any necessary data cleaning steps
+# Example: Removing unnecessary columns
+data = data.drop(['PassengerId', 'Name', 'Ticket', 'Cabin'], axis=1)
+# Handle missing values
+data['Age'].fillna(data['Age'].mean(), inplace=True)
+data['Embarked'].fillna(data['Embarked'].mode()[0], inplace=True)
+# Split the dataset into features and labels
+X = data.drop('Survived', axis=1)
+y = data['Survived']
+# Perform label encoding for categorical variables
+encoder = LabelEncoder()
+categorical_cols = ['Sex', 'Embarked']
+for col in categorical_cols:
+ X[col] = encoder.fit_transform(X[col])
+# Perform feature scaling
+scaler = StandardScaler()
+X_scaled = scaler.fit_transform(X)
+# Split the dataset into training and testing sets
+X_train, X_test, y_train, y_test = train_test_split(X_scaled, y, test_size=0.2,
+random_state=42)
+# Print the shapes of the training and testing sets
+print("Training set shape:", X_train.shape)
+print("Testing set shape:", X_test.shape)
+
+*******************************Manipulation of twitter dataset********************************
+
+import pandas as pd
+path_to_data = '/content/dataset.csv'
+data = pd.read_csv(path_to_data)
+data.head()
+
+#Dopping columns in the data
+df_dropped = data.drop('Birthplace', axis=1)
+df_dropped.head()
+
+#groupin data by sex ad passenger id
+data.groupby('Sex').agg({'Political_party': 'count'})
+
+#slicing the dataset
+data.iloc[:5,8]
+
+#calling dscribe method
+desc = data["Name"].describe()
+
+#display
+desc
+
+
+*****************Evaluating the performance of results of machine learning algorithm******************************
+
+import pandas as pd
+import numpy as np
+import matplotlib.pyplot as plt
+from sklearn.model_selection import train_test_split
+from sklearn.preprocessing import StandardScaler
+from sklearn.linear_model import LogisticRegression
+from sklearn.metrics import accuracy_score, precision_score, recall_score, f1_score
+dataset = pd.read_csv("diabetes.csv")
+x = dataset.iloc[:, [4, 7]].values
+y = dataset.iloc[:, 8].values
+xtrain, xtest, ytrain, ytest = train_test_split(x, y, test_size=0.25, random_state=0)
+sc_x = StandardScaler()
+xtrain = sc_x.fit_transform(xtrain)
+xtest = sc_x.transform(xtest)
+print(xtrain[0:10, :])
+classifier = LogisticRegression(random_state=0)
+classifier.fit(xtrain, ytrain)
+y_pred = classifier.predict(xtest)
+accuracy = accuracy_score(ytest, y_pred)
+precision = precision_score(ytest, y_pred)
+recall = recall_score(ytest, y_pred)
+f1 = f1_score(ytest, y_pred)
+print("Accuracy:", accuracy)
+print("Precision:", precision)
+print("Recall:", recall)
+print("F1 Score:", f1)
+
+******************************:4(a) Predicting Water Temperature based on
+Salinity using Regression******************************
+
+import numpy as np
+import pandas as pd
+import seaborn as sns
+import matplotlib.pyplot as plt
+from sklearn import preprocessing, svm
+from sklearn.model_selection import train_test_split
+from sklearn.linear_model import LinearRegression
+
+# Reading the Dataset
+df = pd.read_csv('bottle.csv')
+df_binary = df[['Salnty', 'T_degC']]
+df_binary.columns = ['Sal', 'Temp']
+df_binary.head()
+
+# Data Cleaning
+df_binary.fillna(method='ffill', inplace=True)
+
+# Training Our Model
+X = np.array(df_binary['Sal']).reshape(-1, 1)
+y = np.array(df_binary['Temp']).reshape(-1, 1)
+df_binary.dropna(inplace=True)
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.25)
+regr = LinearRegression()
+regr.fit(X_train, y_train)
+print(regr.score(X_test, y_test))
+print(df)
+
+# Exploring Our Results
+y_pred = regr.predict(X_test)
+plt.scatter(X_test, y_test, color='b')
+plt.plot(X_test, y_pred, color='k')
+plt.show()
+
+*************************************Ex-4(b) Implementation of Correlation Analysis of Iris and Boston Housing Datasets*******************************
+
+import numpy as np
+import pandas as pd
+
+# Manually upload 'iris.csv' and 'boston.csv' in Google Colab
+# Then use the following code to read and work with the datasets:
+
+# Load the Iris dataset from a manually uploaded CSV file
+iris_df = pd.read_csv('iris.csv')
+
+# Calculate correlation matrix for Iris dataset
+iris_corr_matrix = iris_df.corr()
+
+# Print correlation matrix for Iris dataset
+print("Correlation Matrix for Iris dataset:")
+print(iris_corr_matrix)
+print()
+
+# Load the Boston Housing dataset from a manually uploaded CSV file
+boston_df = pd.read_csv('boston.csv')
+
+# Calculate correlation matrix for Boston Housing dataset
+boston_corr_matrix = boston_df.corr()
+
+# Print correlation matrix for Boston Housing dataset
+print("Correlation Matrix for Boston Housing dataset:")
+print(boston_corr_matrix)
+print()
+
+# Calculate pairwise correlation between two features in the Boston Housing dataset
+crim_corr = boston_df['CRIM'].corr(boston_df['TAX'])
+print("Correlation between 'CRIM' and 'TAX' in Boston Housing dataset:", crim_corr)
+
+
+#####or####
+
+import numpy as np
+import pandas as pd
+from sklearn.datasets import load_iris, fetch_california_housing
+
+# Load the Iris dataset
+iris = load_iris()
+iris_data = iris.data
+iris_feature_names = iris.feature_names
+
+# Convert Iris data to a pandas DataFrame
+iris_df = pd.DataFrame(iris_data, columns=iris_feature_names)
+
+# Calculate correlation matrix for Iris dataset
+iris_corr_matrix = iris_df.corr()
+
+# Print correlation matrix for Iris dataset
+print("Correlation Matrix for Iris dataset:")
+print(iris_corr_matrix)
+print()
+
+# Load the California housing dataset
+housing = fetch_california_housing(as_frame=True)
+housing_data = housing.data
+housing_feature_names = housing.feature_names
+
+# Convert California housing data to a pandas DataFrame
+housing_df = pd.DataFrame(housing_data, columns=housing_feature_names)
+
+# Calculate correlation matrix for California housing dataset
+housing_corr_matrix = housing_df.corr()
+
+# Print correlation matrix for California housing dataset
+print("Correlation Matrix for California Housing dataset:")
+print(housing_corr_matrix)
+print()
+
+# Calculate pairwise correlation between two features in the California housing dataset
+# For example, between 'MedInc' (median income) and 'HouseAge' (median house age)
+medinc_houseage_corr = housing_df['MedInc'].corr(housing_df['HouseAge'])
+print("Correlation between 'MedInc' and 'HouseAge' in California Housing dataset:", medinc_houseage_corr)
+
+*********************************Classification Algorithm - Support Vector Machine*****************************
+
+import matplotlib.pyplot as plt
+import pandas as pd
+import numpy as np
+dataset = pd.read_csv("Social_Network _Ads.csv")
+X = dataset.iloc[:, [2, 3]].values 
+y = dataset.iloc[:, 4].values
+from sklearn.model_selection import train_test_split 
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size = 0.25, random_state = 0)
+from sklearn.preprocessing import StandardScaler
+sc = StandardScaler()
+X_train = sc.fit_transform(X_train)
+X_test = sc.transform(X_test)
+from sklearn.svm import SVC
+classifier = SVC(kernel='rbf', random_state = 0)
+classifier.fit(X_train, y_train)
+y_pred = classifier.predict(X_test)
+from sklearn.metrics import confusion_matrix, accuracy_score
+cm = confusion_matrix(y_test, y_pred)
+print(cm)
+accuracy_score(y_test,y_pred)
+from matplotlib.colors import ListedColormap
+X_set, y_set = X_test, y_test
+X1, X2 = np.meshgrid(np.arange(start = X_set[:, 0].min() - 1, stop = X_set[:, 0].max() + 1, step = 0.01),np.arange(start = X_set[:, 1].min() - 1, stop = X_set[:, 1].max() + 1, step = 0.01))
+plt.contourf(X1, X2, classifier.predict(np.array([X1.ravel(), X2.ravel()]).T).reshape(X1.shape),alpha = 0.75, cmap = ListedColormap(('red', 'green')))
+plt.xlim(X1.min(), X1.max())
+plt.ylim(X2.min(), X2.max())
+for i, j in enumerate(np.unique(y_set)):
+    plt.scatter(X_set[y_set == j, 0], X_set[y_set == j, 1],c = ListedColormap(('pink', 'green'))(i), label = j)
+plt.title('SVM (Test set)')
+plt.xlabel('Age')
+plt.ylabel('Estimated Salary')
+plt.legend()
+plt.show()
+
+**************************EX:6 – NoSQL using MongoDB*************************
+show dbs
+use school
+db.createCollection("students")
+db.students.insertOne({ name: "Spongebob", age: 30, gpa: 3.2 })
+db.students.insertMany([{ name: "Patrick", age: 38, gpa: 1.5 },{ name: "Sandy", age: 27, gpa: 4.0 },{ name: "Gary", age: 18, gpa: 2.5 }])
+db.students.find().sort({ name: 1 })
+db.students.updateOne({ name: "Spongebob" }, { $set: { fulltime: true } })
+db.students.find({ name: "Spongebob" })
+db.students.updateMany({}, { $set: { fulltime: false } })
+db.students.find()
+db.students.deleteOne({ name: "Spongebob" })
+db.students.find()
+db.students.deleteMany({ fulltime: false })
+db.students.find()
+
+************************Hadoop – Map Reduce Program*********************************
+!pip install mrjob
+!pip install tabulate
+
+# Define the MRJob class
+mrjob_code = '''
+from mrjob.job import MRJob
+
+class MRWordCount(MRJob):
+    def mapper(self, _, line):
+        words = line.split()
+        for word in words:
+            yield word, 1
+
+    def reducer(self, word, counts):
+        yield word, sum(counts)
+
+if __name__ == '__main__':
+    MRWordCount.run()
+'''
+
+# Write the MRJob class to a file
+with open('word_count_script.py', 'w') as script_file:
+    script_file.write(mrjob_code)
+
+from google.colab import files
+
+# Upload the input file
+uploaded = files.upload()
+input_filename = list(uploaded.keys())[0]
+
+# Escape the filename properly and run the script on the uploaded file
+!python word_count_script.py -r local "{input_filename}" > output.txt
+
+# Process the output and enhance its structure
+word_counts = []
+with open('output.txt', 'r') as output_file:
+    for line in output_file:
+        word, count = line.strip().split('\t')
+        word_counts.append((word, int(count)))
+
+# Sort words by count in descending order
+word_counts.sort(key=lambda x: x[1], reverse=True)
+
+# Explicitly import the tabulate function
+from tabulate import tabulate
+
+# Print the enhanced output using tabulate
+table = tabulate(word_counts, headers=['Word', 'Count'], tablefmt='grid')
+print(table)
+
+**********************HDFS********************************
+
+!apt-get install openjdk-8-jdk-headless -qq
+!wget -q https://downloads.apache.org/hadoop/common/hadoop-3.3.1/hadoop-3.3.1.tar.gz
+!tar xf hadoop-3.3.1.tar.gz
+
+import os
+os.environ['JAVA_HOME'] = '/usr/lib/jvm/java-8-openjdk-amd64'
+os.environ['HADOOP_HOME'] = '/content/hadoop-3.3.1'
+os.environ['HADOOP_CONF_DIR'] = '/content/hadoop-3.3.1/etc/hadoop'
+os.environ['PATH'] = os.environ['HADOOP_HOME'] + '/bin:' + os.environ['PATH']
+
+# Configure HDFS
+!cp /content/hadoop-3.3.1/etc/hadoop/core-site.xml /content/hadoop3.3.1/etc/hadoop/core-site.xml.bak
+!cp /content/hadoop-3.3.1/etc/hadoop/hdfs-site.xml /content/hadoop3.3.1/etc/hadoop/hdfs-site.xml.bak
+
+core_site_xml = '''
+<configuration>
+    <property>
+        <name>fs.default.name</name>
+        <value>hdfs://localhost:9000</value>
+    </property>
+</configuration>
+'''
+
+hdfs_site_xml = '''
+<configuration>
+    <property>
+        <name>dfs.replication</name>
+        <value>1</value>
+    </property>
+</configuration>
+'''
+
+with open('/content/hadoop-3.3.1/etc/hadoop/core-site.xml', 'w') as core_site_file:
+    core_site_file.write(core_site_xml)
+
+with open('/content/hadoop-3.3.1/etc/hadoop/hdfs-site.xml', 'w') as hdfs_site_file:
+    hdfs_site_file.write(hdfs_site_xml)
+
+# Format HDFS
+!hdfs namenode -format
+
+# Verify HDFS is running
+!jps
+
+
+***************************YARN****************************
+
+!curl -sL https://deb.nodesource.com/setup_14.x | sudo -E bash -
+!sudo apt-get install -y nodejs
+!npm install -g yarn
+!yarn --version
+!yarn init -y
+!yarn add axios
+!yarn start
+import subprocess
+# Define the Yarn command to install a package
+package_name = "axios"
+yarn_command = f"yarn add {package_name}"
+try:
+ # Run the Yarn command using subprocess
+ subprocess.run(yarn_command, shell=True, check=True)
+ print(f"Successfully installed {package_name} using Yarn.")
+except subprocess.CalledProcessError as e:
+ print(f"Error: Yarn command failed with error code {e.returncode}.")
+
+
+*********************pig*************************************
+import os
+import subprocess
+
+# Install OpenJDK 8 (if not already installed)
+java_installation_command = "apt-get install openjdk-8-jre-headless -qq > /dev/null"
+subprocess.run(java_installation_command, shell=True, check=True)
+
+# Download and extract Apache Pig
+pig_download_url = "https://downloads.apache.org/pig/pig-0.17.0/pig-0.17.0.tar.gz"
+subprocess.run(["wget", pig_download_url])
+subprocess.run(["tar", "-xzf", "pig-0.17.0.tar.gz"])
+
+# Set environment variables
+os.environ['PIG_HOME'] = '/content/pig-0.17.0'
+os.environ['PATH'] = os.environ['PIG_HOME'] + '/bin:' + os.environ['PATH']
+os.environ['JAVA_HOME'] = '/usr/lib/jvm/java-8-openjdk-amd64'
+os.environ['HADOOP_CONF_DIR'] = '/path/to/hadoop/config/dir'  # Adjust the path if necessary
+
+# Define the Pig script file
+pig_script_content = """
+A = LOAD 'students.txt' AS (name:chararray, age:int, gpa:float);
+B = GROUP A BY age;
+C = FOREACH B GENERATE group, A.name;
+DUMP C;
+"""
+
+# Save the Pig script to a file
+with open('/content/students.pig', 'w') as pig_script_file:
+    pig_script_file.write(pig_script_content)
+
+# Define the Pig command
+input_data_path = '/content/students.txt'
+
+# Pig command to run the script
+pig_command = f'pig -x local -f /content/students.pig -param input_data={input_data_path}'
+
+try:
+    # Run the Pig script
+    result = subprocess.run(pig_command, shell=True, text=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    
+    # Check if the exit status is 0 (success)
+    if result.returncode == 0:
+        print("Apache Pig script executed successfully.")
+    else:
+        print("Apache Pig script executed with errors. Check the output for details.")
+    
+    # Print the Pig script output
+    print("Standard Output:")
+    print(result.stdout)
+    
+
+except subprocess.CalledProcessError as e:
+    print(f"Error: {e}")
+
+
+************************HIVE*****************************************
+# Update package repositories
+!apt-get update
+# Install Hive and its dependencies
+!apt-get install hive hive-metastore hive-server2 -y
+# Start Hive Metastore and HiveServer2
+!nohup hive --service metastore > /dev/null 2>&1 &
+!nohup hive --service hiveserver2 > /dev/null 2>&1 &
+import subprocess
+# Check if Hive is installed and running
+def check_hive_status():
+    try:
+        # Attempt to run Hive and suppress stderr
+        result = subprocess.run(
+            ["hive", "-e", "SHOW DATABASES;"],
+            stdout=subprocess.PIPE,
+            stderr=subprocess.DEVNULL, # Redirect stderr to /dev/null
+            shell=True,
+            encoding="utf-8", # Specify encoding for Python 3
+        )
+        print("Hive is installed and running.")
+    except FileNotFoundError:
+        print("Hive is not installed.")
+# Call the function to check Hive status
+check_hive_status()
