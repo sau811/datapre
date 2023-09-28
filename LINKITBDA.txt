@@ -448,3 +448,31 @@ def check_hive_status():
         print("Hive is not installed.")
 # Call the function to check Hive status
 check_hive_status()
+
+
+************************************Mapreduce short*********************************************************
+#7a Mapreduce
+from collections import defaultdict
+
+# Sample list of documents
+documents = [
+    "Hello world",
+    "MapReduce example in Python",
+    "Hello Python",
+    "Python is awesome",
+    "MapReduce is cool",
+    "Hello MapReduce"
+]
+
+# Initialize a defaultdict with a default value of 0
+word_counts = defaultdict(int)
+
+# Map phase
+for document in documents:
+    words = document.split()
+    for word in words:
+        word_counts[word] += 1  # No need to use .get() here
+
+# Reduce phase
+for word, count in word_counts.items():
+    print(f"{word}: {count}")
